@@ -81,6 +81,8 @@ public class RotationDemo {
 
         private void setup() {
             // Read in our diamond.dat file and setup our vertice and color array.
+            // The file should be located inside of the src directory alongside the
+            // passthrough files and RotationDemo.java file.
             try (Scanner scanner = new Scanner(new File("src/diamond.dat"))) {
                 int numberOfVertices = scanner.nextInt();
 
