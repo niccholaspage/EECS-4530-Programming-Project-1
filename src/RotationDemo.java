@@ -275,7 +275,7 @@ public class RotationDemo {
                 viewMatrix.gluLookAt(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
             } else if (e.getKeyCode() == KeyEvent.VK_Y) {
                 viewMatrix.glLoadIdentity();
-                viewMatrix.gluLookAt(0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+                viewMatrix.gluLookAt(0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f);
             } else if (e.getKeyCode() == KeyEvent.VK_Z) {
                 viewMatrix.glLoadIdentity();
                 viewMatrix.gluLookAt(0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
