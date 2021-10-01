@@ -1,29 +1,26 @@
 
-import com.jogamp.newt.event.*;
+import com.jogamp.newt.event.KeyEvent;
+import com.jogamp.newt.event.KeyListener;
+import com.jogamp.newt.event.WindowAdapter;
+import com.jogamp.newt.event.WindowEvent;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.*;
-import com.jogamp.opengl.math.FloatUtil;
 import com.jogamp.opengl.util.Animator;
 import com.jogamp.opengl.util.GLBuffers;
 import com.jogamp.opengl.util.PMVMatrix;
 import com.jogamp.opengl.util.glsl.ShaderCode;
 import com.jogamp.opengl.util.glsl.ShaderProgram;
 
-import java.nio.ByteBuffer;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.nio.ShortBuffer;
+import java.util.Scanner;
 
 import static com.jogamp.opengl.GL.*;
-import static com.jogamp.opengl.GL.GL_FLOAT;
-import static com.jogamp.opengl.GL.GL_TRIANGLES;
-import static com.jogamp.opengl.GL.GL_UNSIGNED_SHORT;
 import static com.jogamp.opengl.GL2ES2.GL_DEBUG_SEVERITY_HIGH;
 import static com.jogamp.opengl.GL2ES2.GL_DEBUG_SEVERITY_MEDIUM;
 import static com.jogamp.opengl.GL2ES3.*;
-import static com.jogamp.opengl.GL2ES3.GL_UNIFORM_BUFFER;
-import static com.jogamp.opengl.GL4.GL_MAP_COHERENT_BIT;
-import static com.jogamp.opengl.GL4.GL_MAP_PERSISTENT_BIT;
 
 /**
  *
@@ -69,35 +66,9 @@ public class RotationDemo {
             new HelloTriangleSimple().setup();
         }
 
-        private float vertices[] = {
-                -0.5f, -0.5f, -0.5f, 1.0f, -0.5f, 0.5f, 0.5f, 1.0f, -0.5f, -0.5f, 0.5f, 1.0f,
-                -0.5f, -0.5f, -0.5f, 1.0f, -0.5f, 0.5f, 0.5f, 1.0f, -0.5f, 0.5f, -0.5f, 1.0f,
-                -0.5f, -0.5f, -0.5f, 1.0f, -0.5f, 0.5f, -0.5f, 1.0f, 0.5f, 0.5f, -0.5f, 1.0f,
-                -0.5f, -0.5f, -0.5f, 1.0f, 0.5f, 0.5f, -0.5f, 1.0f, 0.5f, -0.5f, -0.5f, 1.0f,
-                -0.5f, -0.5f, -0.5f, 1.0f, 0.5f, -0.5f, -0.5f, 1.0f, 0.5f, -0.5f, 0.5f, 1.0f,
-                -0.5f, -0.5f, -0.5f, 1.0f, 0.5f, -0.5f, 0.5f, 1.0f, -0.5f, -0.5f, 0.5f, 1.0f,
-                -0.5f, -0.5f, 0.5f, 1.0f, -0.5f, 0.5f, 0.5f, 1.0f, 0.5f, 0.5f, 0.5f, 1.0f,
-                -0.5f, -0.5f, 0.5f, 1.0f, 0.5f, 0.5f, 0.5f, 1.0f, 0.5f, -0.5f, 0.5f, 1.0f,
-                -0.5f, 0.5f, 0.5f, 1.0f, -0.5f, 0.5f, -0.5f, 1.0f, 0.5f, 0.5f, 0.5f, 1.0f,
-                0.5f, 0.5f, 0.5f, 1.0f, 0.5f, 0.5f, -0.5f, 1.0f, -0.5f, 0.5f, -0.5f, 1.0f,
-                0.5f, -0.5f, 0.5f, 1.0f, 0.5f, -0.5f, -0.5f, 1.0f, 0.5f, 0.5f, -0.5f, 1.0f,
-                0.5f, -0.5f, 0.5f, 1.0f, 0.5f, 0.5f, -0.5f, 1.0f, 0.5f, 0.5f, 0.5f, 1.0f
-        };
+        private float vertices[];
 
-        private float colors[] = {
-                0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f,
-                0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f,
-                0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-                0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-                0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-                0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-                0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-                0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-                0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-                1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f,
-                1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-                1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f
-        };
+        private float colors[];
 
 
         private IntBuffer bufferName = GLBuffers.newDirectIntBuffer(Buffer.MAX);
@@ -109,6 +80,25 @@ public class RotationDemo {
         private PMVMatrix projectionMatrix = new PMVMatrix();
 
         private void setup() {
+            // Read in our diamond.dat file and setup our vertice and color array.
+            try (Scanner scanner = new Scanner(new File("src/diamond.dat"))) {
+                int numberOfVertices = scanner.nextInt();
+
+                vertices = new float[numberOfVertices * 4];
+                colors = new float[numberOfVertices * 4];
+
+                for (int i = 0; i < numberOfVertices * 4; i++) {
+                    vertices[i] = scanner.nextFloat();
+                }
+
+                for (int i = 0; i < numberOfVertices * 4; i++) {
+                    colors[i] = scanner.nextFloat();
+                }
+            } catch (FileNotFoundException e) {
+                System.out.println("Failed to read diamond.dat file from src directory!");
+
+                return;
+            }
 
             GLProfile glProfile = GLProfile.get(GLProfile.GL4);
             GLCapabilities glCapabilities = new GLCapabilities(glProfile);
