@@ -23,7 +23,10 @@ import static com.jogamp.opengl.GL2ES2.GL_DEBUG_SEVERITY_MEDIUM;
 import static com.jogamp.opengl.GL2ES3.*;
 
 /**
- *
+ * @author Nicholas Nassar
+ * A simple OpenGL application rendering a diamond.dat file that must be placed
+ * inside the src folder. You can start rotation of the diamond by pressing R,
+ * and pause rotation by pressing P. You can also press ESCAPE to exist.
  */
 
 /**
